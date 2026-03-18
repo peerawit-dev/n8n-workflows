@@ -23,7 +23,7 @@
 
 ### Workflow Overview
 
-![ETL Pipeline Workflow](etl-pipeline-screenshot.png)
+![ETL Pipeline Workflow](etl-pipeline/etl-pipeline-screenshot.png)
 
 ### Pipeline Flow
 
@@ -102,7 +102,7 @@ Profit_THB = Sale_THB - Cost_THB
 
 ### Workflow Overview
 
-![Auto Certificate Workflow](auto-cert-screenshot.png)
+![Auto Certificate Workflow](auto-cert/auto-cert-screenshot.png)
 
 ### How It Works / ขั้นตอนการทำงาน
 
