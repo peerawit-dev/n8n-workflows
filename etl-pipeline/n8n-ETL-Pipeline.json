@@ -1,0 +1,385 @@
+{
+  "name": "N8N_ETL",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ",
+          "mode": "list",
+          "cachedResultName": "DataSourcesForN8N_ETL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 383393268,
+          "mode": "list",
+          "cachedResultName": "GoogleSheet1_Lite",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ/edit#gid=383393268"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:G51"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "7043a45d-e28b-4326-87c3-c3f52eb26118",
+      "name": "Extract Sales Data",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9jDKvJ1ZbI0ptca0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ",
+          "mode": "list",
+          "cachedResultName": "DataSourcesForN8N_ETL",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 759399710,
+          "mode": "list",
+          "cachedResultName": "GoogleSheet2_Lite",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oxmcIsAPmsCrsOtJsmR3lIcGNybxy9vnfR7XTliADwQ/edit#gid=759399710"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:C51"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        64
+      ],
+      "id": "b454e745-e22e-4155-a8cb-cc4aebf809b5",
+      "name": "Extract Product Cost",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9jDKvJ1ZbI0ptca0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "table": {
+          "__rl": true,
+          "value": "final_sales_report",
+          "mode": "list",
+          "cachedResultName": "final_sales_report"
+        },
+        "dataMode": "defineBelow",
+        "columnToMatchOn": "Order_ID",
+        "valueToMatchOn": "={{ $json.Order_ID }}",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "Order_Date",
+              "value": "={{ $json.Order_Date }}"
+            },
+            {
+              "column": "Product_Name",
+              "value": "={{ $json.Product_Name }}"
+            },
+            {
+              "column": "Product_Name",
+              "value": "={{ $json.Product_Name }}"
+            },
+            {
+              "column": "Quantity",
+              "value": "={{ $json.Quantity }}"
+            },
+            {
+              "column": "Sale_Price",
+              "value": "={{ $json.Sale_Price }}"
+            },
+            {
+              "column": "Currency",
+              "value": "={{ $json.Currency }}"
+            },
+            {
+              "column": "Base_Cost",
+              "value": "={{ $json.Base_Cost }}"
+            },
+            {
+              "column": "Base_Currency",
+              "value": "={{ $json.Base_Currency }}"
+            },
+            {
+              "column": "Sale_THB",
+              "value": "={{ $json.Sale_THB }}"
+            },
+            {
+              "column": "Cost_THB",
+              "value": "={{ $json.Cost_THB }}"
+            },
+            {
+              "column": "Profit_THB",
+              "value": "={{ $json.Profit_THB }}"
+            },
+            {
+              "column": "Debug_Unit_Sale",
+              "value": "={{ $json.Debug_Unit_Sale }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1648,
+        192
+      ],
+      "id": "c1915dc6-f2f8-47ec-9146-b66492ca842f",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "nGHO5EKvv8w8N3j1",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "06884987-afe9-4531-a1fd-f2259df00d04",
+              "leftValue": "={{ $json.Order_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1456,
+        192
+      ],
+      "id": "64432c18-7a4c-4541-8ec3-710c1443f315",
+      "name": "Filter",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        48
+      ],
+      "id": "39b09f68-e476-41a7-a7f1-624d43ead11d",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.exchangeratesapi.io/v1/latest?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_key",
+              "value": "=YOUR_EXCHANGE_RATE_API_KEY"
+            },
+            {
+              "name": "symbols",
+              "value": "=USD,JPY,GBP,THB"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        192
+      ],
+      "id": "7e3317e9-b0d5-45fb-90a4-cf83779fcc94",
+      "name": "HTTP Request1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nconst ratesNode = $(\"HTTP Request1\").first(); // ตรวจสอบชื่อ Node API ของคุณ\nconst ratesData = ratesNode.json.rates || ratesNode.json;\n\nconst rates = {\n  THB: parseFloat(ratesData.THB) || 37.0,\n  USD: parseFloat(ratesData.USD) || 1.1,\n  JPY: parseFloat(ratesData.JPY) || 160.0,\n  GBP: parseFloat(ratesData.GBP) || 0.85,\n  EUR: 1,\n};\n\nconst outputItems = [];\n\nfor (let i = 0; i < allItems.length; i++) {\n  const data = { ...allItems[i].json };\n\n  // แปลง String ให้เป็น Number ให้หมดก่อนคำนวณ\n  const salePrice = parseFloat(data.Sale_Price) || 0;\n  const baseCost = parseFloat(data.Base_Cost) || 0;\n  const quantity = parseFloat(data.Quantity) || 0;\n  \n  const rateLocal = rates[data.Currency] || 1;\n  const rateCost = rates[data.Base_Currency || 'USD'] || 1;\n  const rateTHB = rates.THB;\n\n  // --- คำนวณหาค่าต่อหน่วยก่อน ---\n  // สูตร: (ราคาขาย / เรทเงินนั้น) * เรท THB\n  const unitSaleTHB = (salePrice / rateLocal) * rateTHB;\n  const unitCostTHB = (baseCost / rateCost) * rateTHB;\n\n  // --- คำนวณยอดรวม ---\n  data.Sale_THB = Math.round((unitSaleTHB * quantity) * 100) / 100;\n  data.Cost_THB = Math.round((unitCostTHB * quantity) * 100) / 100;\n  data.Profit_THB = Math.round((data.Sale_THB - data.Cost_THB) * 100) / 100;\n\n  // เพิ่ม Field ไว้เช็คค่าเฉยๆ (ลบออกได้ตอนใช้งานจริง)\n  data.Debug_Unit_Sale = Math.round(unitSaleTHB * 100) / 100;\n\n  outputItems.push({ json: data });\n}\n\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        192
+      ],
+      "id": "2d93ab5d-7e20-433c-a071-1ff0058f512f",
+      "name": "Code in JavaScript1",
+      "executeOnce": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "Product_Name",
+        "joinMode": "enrichInput1",
+        "options": {
+          "multipleMatches": "first"
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1008,
+        -16
+      ],
+      "id": "8428f499-23d9-42f5-b571-039410ac2f17",
+      "name": "Merge1",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract Sales Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Product Cost",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Product Cost": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Extract Sales Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "369af2d0-9231-4f9d-ab96-315422f3eb83",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dbbc67771ef6352634c5d97ef311110603e4b599596fddd704d1a0921fac6841"
+  },
+  "id": "E37CtbocbEy3EI5f",
+  "tags": []
+}
