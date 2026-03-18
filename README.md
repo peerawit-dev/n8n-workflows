@@ -156,7 +156,7 @@ n8n-workflows/
 │   ├── etl_pipeline-screenshot.png                  ← Workflow canvas
 │   └── Final_Sales_Report.csv
 ├── auto-cert/
-│   ├── _DSP__Certificate_w__Google_Forms.json  ← Import into n8n
+│   ├── DSP-Certificate-w_ Google Forms.json  ← Import into n8n
 │   └── auto_screenshot.png                  ← Workflow canvas
 └── README.md
 ```
