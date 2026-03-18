@@ -1,0 +1,680 @@
+{
+  "name": "[DSP] Certificate w/ Google Forms",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        864,
+        544
+      ],
+      "id": "80903d86-b935-4000-bd20-572ad76aff6a",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "content": "### วิธีการทำงาน\n* สร้าง Google Form และเปิด \"Enable Quiz Mode\"\n* กด Publish Google Form ของเรา และลองส่งฟอร์มดูด้วยข้อมูลที่เรากรอกเอง\n* เข้าไปใน Form ของเรา ตรงแถบ Response เราจะเห็นไอคอน Google Sheet และคำว่า \"Link to Google Sheet\"\n* กดเข้าไปเลยค้าบ มันจะสร้าง Google Sheet ที่เชื่อมกับ Form ของเราอันนี้ให้ฮะ",
+        "height": 256,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8144e151-bdca-443f-a6f8-82a78618dfec",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 3) Passing Score\n* เอาข้อมูล \"คะแนน\" \"Status\"ที่ดึงมาเมื่อกี้ มาสร้างเงื่อนไข\n* เช่น คะแนน ต้องมากกว่า 5 และ สถานะต้องไม่เป็น Sent\n* ถ้ามากกว่า ไปทางบน ถ้าน้อยกว่า หรือสถานะเป็น Sent ไปทางล่าง\n",
+        "height": 216,
+        "width": 180,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        576,
+        272
+      ],
+      "id": "c238b402-2636-4f31-a596-798535ba2a0e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 1) Trigger Node\n* เอา Google Sheet ที่มันสร้างให้เมื่อกี้มาเชื่อมตรงนี้\n* เลือกแบบ id ก็ได้ หรือหาชื่อธรรมดาก็ได้ แล้วแต่ถนัดฮะ",
+        "height": 180,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        336
+      ],
+      "id": "f75b9f2e-81b1-40de-8073-1b3afa737ef1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### 2) Extract Node\n* Select the data we want to use to proceed.\n* ใช้เพื่อดึงข้อมูลต่างๆ ที่เราต้องการใช้งานออกมาจาก Google Sheet (Node แรก)\n* สำหรับตัวอย่างนี้ผมจะดึงแค่ \"ชื่อ / เมลล์ / คะแนน\" เพราะผมต้องใช้แค่นั้น\n* เพื่อนๆ จะใช้อะไรบ้างก็ดึงตามที่ตัวเองชอบเลยค้าบ",
+        "height": 280,
+        "width": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        288,
+        224
+      ],
+      "id": "286a5205-1157-4537-a8d7-81d7e9480b97",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cdc9108-ab77-4904-a74b-29677b06cc81",
+              "name": "respondentName",
+              "value": "={{ $json['ชื่อ-นามสกุล'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1800b27a-6cbc-4b82-a17a-87d7d1e7a66e",
+              "name": "respondentEmail",
+              "value": "={{ $json['Email Address'] }}",
+              "type": "string"
+            },
+            {
+              "id": "36cb99ca-7c98-41b5-a2a4-a03ac8d83189",
+              "name": "respondentScore",
+              "value": "={{ $json.Score }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        480
+      ],
+      "id": "37f7569e-2564-4f6f-80e5-4448f57a5040",
+      "name": "Extract essential data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "286a95ee-1edc-4310-af22-d161e1f04a27",
+              "leftValue": "={{ $json.respondentScore }}",
+              "rightValue": 15,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "e02aab70-f37a-4273-96d1-d6a78904dd49",
+              "leftValue": "={{ $('Google Sheets Trigger').item.json.Status }}",
+              "rightValue": "Sent",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        464
+      ],
+      "id": "b8c4d9fc-9634-407f-bf6d-83101bd05434",
+      "name": "Score Checker"
+    },
+    {
+      "parameters": {
+        "content": "### 4.1) ถ้าคะแนนน้อยกว่าเกณฑ์ \n* ไม่ต้องทำอะไร\n",
+        "width": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        480
+      ],
+      "id": "d69865b2-cb04-4a6b-9b8d-3142f0391499",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### 5) Replace text\n* Node นี้มีหน้าที่เอาข้อมูลที่เรารับมาจาก User แทนที่ใน Placeholder\n* เช่นของผมจะตั้งไวเป็น [ name ] ตรงนี้ผมก็จะแทนด้วยชื่อที่เขากรอกมาในฟอร์ม\n",
+        "width": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        32
+      ],
+      "id": "dba949de-0f0d-482d-874b-94f50ef11e5f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### 6) To PDF\n* แปลงจากไฟล์ Google Slide ที่แก้แล้ว ให้ระบบเซฟออกมาเป็น PDF\n* เปลี่ยนวิธีตั้งชื่อตามสะดวก",
+        "width": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        368
+      ],
+      "id": "e7a4c697-9af8-40f8-b01b-cfa48f524e75",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1UpqwHRbUBcm5cUfgtA51Tb2cf4t-5Tj6lPzOlU0RD9M",
+          "mode": "id"
+        },
+        "name": "={{ $json.respondentName }}'s Certificate",
+        "sameFolder": false,
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1T8NgmfE0OdxthKWY-8YXqFPRkdub9o6q",
+          "mode": "list",
+          "cachedResultName": "Class Work Y3",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1T8NgmfE0OdxthKWY-8YXqFPRkdub9o6q"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        864,
+        320
+      ],
+      "id": "585b8562-2515-400b-850e-d3a804e3971e",
+      "name": "Copy from your template",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SRo66LvykTFQYsE1",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "replaceText",
+        "presentationId": "={{ $json.id }}",
+        "textUi": {
+          "textValues": [
+            {
+              "pageObjectIds": [
+                "g3cd24ad77be_0_0"
+              ],
+              "text": "[ NAME ]",
+              "replaceText": "={{ $('Score Checker').item.json.respondentName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSlides",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        176
+      ],
+      "id": "b5819ba6-d73b-4c19-a018-aad2d49d5ea6",
+      "name": "Replace text",
+      "credentials": {
+        "googleSlidesOAuth2Api": {
+          "id": "TtqXosp3JYKAvuf3",
+          "name": "Google Slides account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.presentationId }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "slidesToFormat": "application/pdf"
+            }
+          },
+          "fileName": "={{ $('Score Checker').item.json.respondentName }}'s Certificate"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        480
+      ],
+      "id": "08d9c3c8-1776-4ac2-9fb2-080118d94bdc",
+      "name": "Convert to PDF",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SRo66LvykTFQYsE1",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json['Email Address'] }}",
+        "subject": "=[ระบบอัตโนมัติ] จัดส่งเกียรติบัตร - {{ $json['ชื่อ-นามสกุล'] }}",
+        "message": "=<p>เรียน คุณ <strong>{{ $json['ชื่อ-นามสกุล'] }}</strong></p>\n\n<p>ขอแสดงความยินดี! ท่านได้ผ่านการทดสอบและเข้าร่วมกิจกรรมเรียบร้อยแล้ว ด้วยคะแนน <strong>{{ $('Google Sheets Trigger').item.json.Score }} คะแนน</strong></p>\n\n<p>ระบบได้ทำการสร้างเกียรติบัตรอิเล็กทรอนิกส์ (E-Certificate) ในรูปแบบไฟล์ PDF และแนบมาพร้อมกับอีเมลฉบับนี้ เพื่อเป็นการรับรองการเข้าร่วมกิจกรรมของท่าน</p>\n\n<p>หากมีข้อสงสัยหรือพบปัญหาเกี่ยวกับเกียรติบัตร กรุณาติดต่อทีมงานได้โดยตรง</p>\n\n<br>\n<p>ขอแสดงความนับถือ</p>\n<p><strong>ระบบออกเกียรติบัตรอัตโนมัติ (Automated Certificate System)</strong></p>\n<p><small><em>*อีเมลฉบับนี้ถูกส่งโดยระบบอัตโนมัติ (Automated Message) กรุณาอย่าตอบกลับอีเมลนี้ (No Reply)*</em></small></p>",
+        "options": {
+          "appendAttribution": true,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        480
+      ],
+      "id": "b2e3d67c-4864-45ed-888f-1b1322800a11",
+      "name": "Send to user's email",
+      "webhookId": "192bfba7-4590-4fef-b441-d3de21638ea9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XMYab952yn92FdR2",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 7) Send email\n* ส่ง email ไปหา user\n* ใช้ Field ของ email ที่ เราดึงออกมา (ขั้นตอนที่ 2) ใส่ในนี้ได้เลย",
+        "width": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        352
+      ],
+      "id": "8961253e-f483-4c7c-90ea-e901a5e80d2c",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "### 4.2) คะแนนมากกว่าเกณฑ์\n* ก๊อปปี้ Template เกียรติบัตรที่เราทำไว้ใน Google Slide (หรือที่อื่น)\n* ถ้าใครยังไม่มีก็ไปสร้างก่อนก็ได้ครับ ง่ายสุดคือใช้ Google Slide แล้วเลือก Template ตามที่เราชอบเลย\n* พอสร้างแล้วก็เอา id ของ Slide ใส่ในนี้นะครับ",
+        "height": 260,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        112
+      ],
+      "id": "1951b322-13dc-4851-944e-6e70a82856cb",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "ลงทะเบียนรับเกียรติบัตร (Certificate Registration) (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 507787171,
+          "mode": "list",
+          "cachedResultName": "Form Responses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=507787171"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "=Sent",
+            "Timestamp": "={{ $('Google Sheets Trigger').item.json.Timestamp }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ชื่อ-นามสกุล (ที่จะให้ปรากฏบนเกียรติบัตร) ",
+              "displayName": "ชื่อ-นามสกุล (ที่จะให้ปรากฏบนเกียรติบัตร) ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "อีเมล (Email) ",
+              "displayName": "อีเมล (Email) ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1. n8n คือเครื่องมือประเภทใด?",
+              "displayName": "1. n8n คือเครื่องมือประเภทใด?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 4",
+              "displayName": "Column 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2. ใน n8n Node ที่ทำหน้าที่ 'เริ่มต้น' การทำงานของระบบ เรียกว่าอะไร?",
+              "displayName": "2. ใน n8n Node ที่ทำหน้าที่ 'เริ่มต้น' การทำงานของระบบ เรียกว่าอะไร?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3. ข้อมูลที่รับ-ส่งระหว่าง Node ใน n8n ส่วนใหญ่จะอยู่ในรูปแบบใด?",
+              "displayName": "3. ข้อมูลที่รับ-ส่งระหว่าง Node ใน n8n ส่วนใหญ่จะอยู่ในรูปแบบใด?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "4. ถ้าต้องการสร้างเงื่อนไข 'ถ้าคะแนน > 5 ให้สอบผ่าน' ต้องใช้ Node ใด?",
+              "displayName": "4. ถ้าต้องการสร้างเงื่อนไข 'ถ้าคะแนน > 5 ให้สอบผ่าน' ต้องใช้ Node ใด?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "5. ข้อใดคือประโยชน์ที่เด่นชัดที่สุดของการใช้ n8n?",
+              "displayName": "5. ข้อใดคือประโยชน์ที่เด่นชัดที่สุดของการใช้ n8n?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        480
+      ],
+      "id": "b9a7d0d4-e768-41c4-8e79-bd3f66890c7a",
+      "name": "Update Status ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5W8j9iSgMPip51xR",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "ลงทะเบียนรับเกียรติบัตร (Certificate Registration) (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 507787171,
+          "mode": "list",
+          "cachedResultName": "Form Responses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=507787171"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        480
+      ],
+      "id": "dc0059da-1781-4e70-a83e-5f029369096a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "NS55AcuNFyV2El38",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract essential data": {
+      "main": [
+        [
+          {
+            "node": "Score Checker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Checker": {
+      "main": [
+        [
+          {
+            "node": "Copy from your template",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy from your template": {
+      "main": [
+        [
+          {
+            "node": "Replace text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace text": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF": {
+      "main": [
+        [
+          {
+            "node": "Send to user's email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to user's email": {
+      "main": [
+        [
+          {
+            "node": "Update Status ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract essential data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Bangkok",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "543eb097-aa86-45ca-a03d-2388faa8a401",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dbbc67771ef6352634c5d97ef311110603e4b599596fddd704d1a0921fac6841"
+  },
+  "id": "kjyQzrzoi7xLMy6V",
+  "tags": []
+}
